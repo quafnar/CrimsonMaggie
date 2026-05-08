@@ -1,0 +1,157 @@
+/* -----------------------------------------------------
+ * Crimson Maggie window styles
+ * --------------------------------------------------- */
+
+.crimson-maggie .cm-root {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  font-family: var(--font-primary, sans-serif);
+}
+
+/* The screen — holds the face SVG and overlays */
+.crimson-maggie .cm-screen {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+.crimson-maggie .cm-screen svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* Always-on scanline overlay — sells the CRT vibe */
+.crimson-maggie .cm-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.18) 3px,
+    rgba(0, 0, 0, 0) 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Mood-specific animations applied to the inner SVG */
+.crimson-maggie .cm-screen[data-mood="manic"] svg {
+  animation: cm-pulse 0.9s infinite;
+}
+.crimson-maggie .cm-screen[data-mood="furious"] svg {
+  animation: cm-flicker 0.6s infinite;
+}
+.crimson-maggie .cm-screen[data-mood="glitched"] svg {
+  animation: cm-jitter 0.18s infinite steps(2, end);
+}
+
+@keyframes cm-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.02); }
+}
+@keyframes cm-flicker {
+  0%, 47%, 53%, 100% { opacity: 1; }
+  50%                { opacity: 0.65; }
+}
+@keyframes cm-jitter {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-1px, 1px); }
+  50%  { transform: translate(1px, -1px); }
+  75%  { transform: translate(-1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* One-shot glitch flash triggered by GM */
+.crimson-maggie .cm-screen.cm-flash {
+  animation: cm-flash 0.7s ease-out 1;
+}
+@keyframes cm-flash {
+  0%   { filter: invert(1) hue-rotate(120deg); }
+  30%  { filter: invert(0); }
+  60%  { filter: invert(1) hue-rotate(-120deg); }
+  100% { filter: invert(0); }
+}
+
+/* Meta row — mood label */
+.crimson-maggie .cm-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.crimson-maggie .cm-meta-cell {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+.crimson-maggie .cm-meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+.crimson-maggie .cm-meta-value {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+
+
+/* GM controls — only rendered when isGM */
+.crimson-maggie .cm-gm-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.crimson-maggie .cm-mood-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 4px;
+}
+
+.crimson-maggie .cm-mood-btn {
+  font-size: 12px;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  transition: background 0.12s, border-color 0.12s;
+}
+.crimson-maggie .cm-mood-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.crimson-maggie .cm-mood-btn.active {
+  background: #d4537e;
+  border-color: #d4537e;
+  color: #fff;
+}
+
+.crimson-maggie .cm-action-btn {
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+}
+.crimson-maggie .cm-action-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}

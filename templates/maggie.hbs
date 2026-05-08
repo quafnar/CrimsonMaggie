@@ -1,0 +1,42 @@
+<section class="cm-root">
+
+  <div class="cm-screen" data-mood="{{moodKey}}">
+    <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+      {{{faceSVG}}}
+    </svg>
+    <div class="cm-scanlines"></div>
+  </div>
+
+  {{#if isGM}}
+  <div class="cm-meta">
+    <div class="cm-meta-cell">
+      <div class="cm-meta-label">Mood</div>
+      <div class="cm-meta-value">{{moodLabel}}</div>
+    </div>
+  </div>
+  
+  <div class="cm-gm-controls">
+
+    <div class="cm-mood-grid">
+      {{#each moods}}
+      <button type="button"
+              class="cm-mood-btn{{#if this.active}} active{{/if}}"
+              data-action="setMood"
+              data-mood-key="{{this.key}}">
+        {{this.label}}
+      </button>
+      {{/each}}
+    </div>
+
+    <button type="button" data-action="glitch" class="cm-action-btn">
+      <i class="fa-solid fa-bolt"></i> Glitch flash
+    </button>
+
+    <button type="button" data-action="show" class="cm-action-btn">
+      <i class="fa-solid fa-eye"></i> Show on clients
+    </button>
+
+  </div>
+  {{/if}}
+
+</section>

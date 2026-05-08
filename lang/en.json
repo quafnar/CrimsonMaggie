@@ -1,0 +1,15 @@
+{
+  "CRIMSON_MAGGIE.WindowTitle": "CRIMSON",
+  "CRIMSON_MAGGIE.OpenButton": "Crimson Maggie",
+  "CRIMSON_MAGGIE.Mood": "Mood",
+  "CRIMSON_MAGGIE.Glitch": "Trigger glitch flash",
+  "CRIMSON_MAGGIE.Moods.manic": "Manic upswing",
+  "CRIMSON_MAGGIE.Moods.sarcastic": "Sarcastic baseline",
+  "CRIMSON_MAGGIE.Moods.delighted": "Genuinely delighted",
+  "CRIMSON_MAGGIE.Moods.disappointed": "Disappointed",
+  "CRIMSON_MAGGIE.Moods.furious": "Furious",
+  "CRIMSON_MAGGIE.Moods.glitched": "Glitched",
+  "CRIMSON_MAGGIE.Moods.lucid": "Lucid moment",
+  "CRIMSON_MAGGIE.Settings.SyncToPlayers": "Sync state to all players",
+  "CRIMSON_MAGGIE.Settings.SyncToPlayersHint": "When enabled, the GM's mood changes are automatically pushed to all connected players' open Maggie windows."
+}
