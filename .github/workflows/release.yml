@@ -1,0 +1,35 @@
+name: Release Module
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Substitute the manifest and download URLs in module.json
+      - name: Update module.json
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: 'module.json'
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
+          URL: https://github.com/${{ github.repository }}
+          MANIFEST: https://github.com/${{ github.repository }}/releases/latest/download/module.json
+          DOWNLOAD: https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/crimson-maggie.zip
+
+      # Create the module zip
+      - name: Create zip
+        run: zip -r ./crimson-maggie.zip module.json README.md LICENSE scripts/ styles/ templates/ lang/ packs/
+
+      # Upload the manifest and zip to the release
+      - name: Upload release artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./module.json
+            ./crimson-maggie.zip
+          tag_name: ${{ github.event.release.tag_name }}
