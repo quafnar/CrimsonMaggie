@@ -18,8 +18,8 @@ jobs:
         env:
           VERSION: ${{ github.event.release.tag_name }}
           URL: https://github.com/${{ github.repository }}
-          MANIFEST: https://github.com/${{ github.repository }}/releases/latest/download/module.json
-          DOWNLOAD: https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/crimson-maggie.zip
+          MANIFEST: https://github.com/${{ github.repository }}/releases/download/latest/module.json
+          DOWNLOAD: https://github.com/${{ github.repository }}/releases/download/latest/crimson-maggie.zip
 
       # Create the module zip
       - name: Create zip
