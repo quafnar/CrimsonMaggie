@@ -12,7 +12,7 @@
   "CRIMSON_MAGGIE.Moods.lucid": "Lucid moment",
   "CRIMSON_MAGGIE.Settings.SyncToPlayers": "Sync state to all players",
   "CRIMSON_MAGGIE.Settings.SyncToPlayersHint": "When enabled, the GM's mood changes are automatically pushed to all connected players' open Maggie windows.",
-  "CRIMSON_MAGGIE.Terminal.Title": "Terminal // M.A.G.G.I.E",
+  "CRIMSON_MAGGIE.Terminal.Title": "Terminal // C.R.I.M.S.O.N",
   "CRIMSON_MAGGIE.Terminal.Empty": "> awaiting transmission_",
   "CRIMSON_MAGGIE.Terminal.Send": "Send to terminal",
   "CRIMSON_MAGGIE.Terminal.Show": "Show to players",
