@@ -2,7 +2,7 @@
   "id": "crimson-maggie",
   "title": "Crimson Maggie — Ship VI",
   "description": "A glitchy, sarcastic shipboard virtual intelligence for Captain Redbeard's pirate vessel. Displays a pixelated, monochromatic face with mood-based backgrounds. The GM controls Maggie's mood, status text, and dialogue; players see her reactions on a shared window.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "compatibility": {
     "minimum": "12",
     "verified": "14"

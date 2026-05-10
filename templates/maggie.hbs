@@ -7,6 +7,32 @@
     <div class="cm-scanlines"></div>
   </div>
 
+  {{#if showTerminal}}
+  <div class="cm-terminal{{#unless terminal.visible}} cm-terminal--hidden-from-players{{/unless}}">
+    <div class="cm-terminal-bezel">
+      <span class="cm-terminal-led{{#if terminal.visible}} on{{/if}}"></span>
+      <span class="cm-terminal-title">TERMINAL // M.A.G.G.I.E</span>
+      {{#if isGM}}
+      <span class="cm-terminal-state">
+        {{#if terminal.visible}}LIVE{{else}}OFFLINE (GM only){{/if}}
+      </span>
+      {{/if}}
+    </div>
+    <div class="cm-terminal-screen" aria-live="polite">
+      <div class="cm-terminal-content">
+        {{#if terminal.hasContent}}
+          {{{terminal.html}}}
+        {{else}}
+          <p class="cm-terminal-empty">&gt; awaiting transmission_</p>
+        {{/if}}
+      </div>
+      <div class="cm-terminal-cursor">&#9608;</div>
+      <div class="cm-scanlines cm-scanlines--terminal"></div>
+      <div class="cm-terminal-tear"></div>
+    </div>
+  </div>
+  {{/if}}
+
   {{#if isGM}}
   <div class="cm-meta">
     <div class="cm-meta-cell">
@@ -35,6 +61,32 @@
     <button type="button" data-action="show" class="cm-action-btn">
       <i class="fa-solid fa-eye"></i> Show on clients
     </button>
+
+    <div class="cm-terminal-controls">
+      <div class="cm-meta-label">Terminal (markdown)</div>
+      <textarea class="cm-terminal-input"
+                rows="5"
+                spellcheck="false"
+                placeholder="# Incoming transmission&#10;&#10;**Warning:** hull integrity at *42%*.&#10;&#10;- Decks 3, 7 venting&#10;- Reroute to `aux power`">{{terminal.source}}</textarea>
+
+      <div class="cm-terminal-buttons">
+        <button type="button" data-action="sendTerminal" class="cm-action-btn">
+          <i class="fa-solid fa-paper-plane"></i> Send to terminal
+        </button>
+
+        <button type="button" data-action="toggleTerminal" class="cm-action-btn">
+          {{#if terminal.visible}}
+          <i class="fa-solid fa-eye-slash"></i> Hide from players
+          {{else}}
+          <i class="fa-solid fa-display"></i> Show to players
+          {{/if}}
+        </button>
+
+        <button type="button" data-action="clearTerminal" class="cm-action-btn">
+          <i class="fa-solid fa-eraser"></i> Clear
+        </button>
+      </div>
+    </div>
 
   </div>
   {{/if}}
