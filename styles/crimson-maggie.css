@@ -155,3 +155,273 @@
 .crimson-maggie .cm-action-btn:hover {
   background: rgba(255, 255, 255, 0.08);
 }
+
+/* -----------------------------------------------------
+ * Terminal display — glitchy CRT readout
+ * --------------------------------------------------- */
+.crimson-maggie .cm-terminal {
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(34, 255, 136, 0.25);
+  background: #050a07;
+  box-shadow:
+    inset 0 0 18px rgba(34, 255, 136, 0.18),
+    0 0 6px rgba(34, 255, 136, 0.08);
+}
+
+.crimson-maggie .cm-terminal--hidden-from-players {
+  border-color: rgba(255, 200, 80, 0.35);
+  box-shadow:
+    inset 0 0 14px rgba(255, 200, 80, 0.12),
+    0 0 4px rgba(255, 200, 80, 0.08);
+  opacity: 0.85;
+}
+
+.crimson-maggie .cm-terminal-bezel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(34, 255, 136, 0.8);
+  background: linear-gradient(to bottom, #0c1410, #050a07);
+  border-bottom: 1px solid rgba(34, 255, 136, 0.18);
+}
+
+.crimson-maggie .cm-terminal--hidden-from-players .cm-terminal-bezel {
+  color: rgba(255, 200, 80, 0.8);
+  border-bottom-color: rgba(255, 200, 80, 0.2);
+}
+
+.crimson-maggie .cm-terminal-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2a1d0a;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.8);
+}
+.crimson-maggie .cm-terminal-led.on {
+  background: #22ff88;
+  box-shadow: 0 0 6px #22ff88, 0 0 2px #22ff88;
+  animation: cm-term-blink 1.6s steps(2, end) infinite;
+}
+
+.crimson-maggie .cm-terminal-title { flex: 1; }
+.crimson-maggie .cm-terminal-state {
+  opacity: 0.75;
+  font-size: 9px;
+}
+
+.crimson-maggie .cm-terminal-screen {
+  position: relative;
+  min-height: 90px;
+  max-height: 280px;
+  overflow: auto;
+  padding: 10px 12px 18px;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #22ff88;
+  background:
+    radial-gradient(ellipse at center, rgba(34, 255, 136, 0.06) 0%, transparent 70%),
+    #050a07;
+  text-shadow:
+    0 0 1px rgba(34, 255, 136, 0.9),
+    1px 0 0 rgba(255, 34, 170, 0.35),
+    -1px 0 0 rgba(34, 200, 255, 0.35);
+  animation: cm-term-flicker 3.2s infinite;
+}
+
+.crimson-maggie .cm-terminal-content {
+  position: relative;
+  z-index: 2;
+  word-wrap: break-word;
+}
+
+.crimson-maggie .cm-terminal-content > *:first-child { margin-top: 0; }
+.crimson-maggie .cm-terminal-content > *:last-child { margin-bottom: 0; }
+
+.crimson-maggie .cm-terminal-content h1,
+.crimson-maggie .cm-terminal-content h2,
+.crimson-maggie .cm-terminal-content h3,
+.crimson-maggie .cm-terminal-content h4,
+.crimson-maggie .cm-terminal-content h5,
+.crimson-maggie .cm-terminal-content h6 {
+  font-family: inherit;
+  color: #aaffcc;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0.6em 0 0.3em;
+  border: none;
+  font-weight: 700;
+}
+.crimson-maggie .cm-terminal-content h1 { font-size: 1.25em; }
+.crimson-maggie .cm-terminal-content h2 { font-size: 1.15em; }
+.crimson-maggie .cm-terminal-content h3 { font-size: 1.05em; }
+.crimson-maggie .cm-terminal-content h4,
+.crimson-maggie .cm-terminal-content h5,
+.crimson-maggie .cm-terminal-content h6 { font-size: 1em; }
+
+.crimson-maggie .cm-terminal-content p { margin: 0.4em 0; }
+
+.crimson-maggie .cm-terminal-content strong { color: #ffffff; }
+.crimson-maggie .cm-terminal-content em { color: #ffdf66; font-style: normal; }
+
+.crimson-maggie .cm-terminal-content ul,
+.crimson-maggie .cm-terminal-content ol {
+  margin: 0.4em 0;
+  padding-left: 1.5em;
+}
+.crimson-maggie .cm-terminal-content li { margin: 0.15em 0; }
+.crimson-maggie .cm-terminal-content ul li::marker { content: "» "; }
+
+.crimson-maggie .cm-terminal-content blockquote {
+  margin: 0.4em 0;
+  padding: 2px 8px;
+  border-left: 2px solid #22ff88;
+  background: rgba(34, 255, 136, 0.06);
+  color: #b6ffd5;
+}
+
+.crimson-maggie .cm-terminal-content code {
+  font-family: inherit;
+  background: rgba(34, 255, 136, 0.1);
+  padding: 0 3px;
+  border-radius: 2px;
+  color: #ffdf66;
+}
+.crimson-maggie .cm-terminal-content pre {
+  background: rgba(34, 255, 136, 0.06);
+  border: 1px dashed rgba(34, 255, 136, 0.35);
+  padding: 6px 8px;
+  margin: 0.4em 0;
+  overflow-x: auto;
+  border-radius: 3px;
+}
+.crimson-maggie .cm-terminal-content pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.crimson-maggie .cm-terminal-empty {
+  opacity: 0.55;
+  font-style: normal;
+}
+
+.crimson-maggie .cm-terminal-cursor {
+  display: inline-block;
+  position: relative;
+  z-index: 2;
+  margin-top: 2px;
+  color: #22ff88;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1;
+  animation: cm-term-cursor 1s steps(2, end) infinite;
+}
+
+/* Scanline overlay on terminal — denser than the face screen's */
+.crimson-maggie .cm-scanlines--terminal {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 0, 0, 0.35) 2px,
+    rgba(0, 0, 0, 0) 3px
+  );
+  mix-blend-mode: multiply;
+  z-index: 3;
+}
+
+/* Occasional tear bar that slides down the screen */
+.crimson-maggie .cm-terminal-tear {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10%;
+  height: 6px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(34, 255, 136, 0.18),
+    rgba(255, 255, 255, 0.25),
+    rgba(34, 255, 136, 0.18),
+    transparent
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 4;
+  animation: cm-term-tear 7s ease-in-out infinite;
+}
+
+@keyframes cm-term-flicker {
+  0%, 100%   { opacity: 1; }
+  3%         { opacity: 0.82; }
+  3.5%       { opacity: 1; }
+  47%        { opacity: 0.94; }
+  47.6%      { opacity: 1; }
+  72%        { opacity: 0.78; }
+  72.4%      { opacity: 1; }
+  88%        { opacity: 0.9; }
+  88.5%      { opacity: 1; }
+}
+
+@keyframes cm-term-cursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes cm-term-blink {
+  0%, 60%  { opacity: 1; }
+  61%, 100% { opacity: 0.35; }
+}
+
+@keyframes cm-term-tear {
+  0%   { top: -10%; opacity: 0; }
+  10%  { opacity: 0.9; }
+  60%  { opacity: 0.9; }
+  70%  { top: 110%; opacity: 0; }
+  100% { top: 110%; opacity: 0; }
+}
+
+/* GM-side terminal controls */
+.crimson-maggie .cm-terminal-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.crimson-maggie .cm-terminal-input {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  width: 100%;
+  resize: vertical;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(34, 255, 136, 0.3);
+  background: #050a07;
+  color: #b6ffd5;
+  box-shadow: inset 0 0 6px rgba(34, 255, 136, 0.15);
+}
+.crimson-maggie .cm-terminal-input:focus {
+  outline: none;
+  border-color: rgba(34, 255, 136, 0.6);
+  box-shadow: inset 0 0 8px rgba(34, 255, 136, 0.3);
+}
+.crimson-maggie .cm-terminal-input::placeholder {
+  color: rgba(182, 255, 213, 0.35);
+}
+
+.crimson-maggie .cm-terminal-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 4px;
+}

@@ -227,12 +227,96 @@ function renderFaceSVG(moodKey) {
 }
 
 /* -----------------------------------------------------
+ * Tiny markdown -> HTML renderer.
+ * Intentionally minimal: headers, bold, italic, inline code,
+ * fenced code blocks, blockquotes, unordered/ordered lists,
+ * and paragraph/line breaks. Input is HTML-escaped first so
+ * raw HTML in the source can't break out.
+ * --------------------------------------------------- */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderMarkdown(src) {
+  if (src == null) return "";
+  let text = String(src).replace(/\r\n?/g, "\n");
+
+  // Pull out fenced code blocks before escaping so their contents survive.
+  const codeBlocks = [];
+  text = text.replace(/```([\s\S]*?)```/g, (_m, code) => {
+    codeBlocks.push(code.replace(/^\n/, "").replace(/\n$/, ""));
+    return `@@CB${codeBlocks.length - 1}@@`;
+  });
+
+  text = escapeHtml(text);
+
+  // Inline code
+  text = text.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+
+  // Bold then italic (order matters)
+  text = text.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
+  text = text.replace(/__([^_\n]+)__/g, "<strong>$1</strong>");
+  text = text.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+  text = text.replace(/(^|[^_])_([^_\n]+)_/g, "$1<em>$2</em>");
+
+  // Headers
+  text = text.replace(/^###### (.+)$/gm, "<h6>$1</h6>");
+  text = text.replace(/^##### (.+)$/gm, "<h5>$1</h5>");
+  text = text.replace(/^#### (.+)$/gm, "<h4>$1</h4>");
+  text = text.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+  text = text.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+  text = text.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+
+  // Blockquote (group consecutive lines)
+  text = text.replace(/(^&gt; .*(?:\n&gt; .*)*)/gm, (m) => {
+    const inner = m.split("\n").map((l) => l.replace(/^&gt; /, "")).join("<br>");
+    return `<blockquote>${inner}</blockquote>`;
+  });
+
+  // Unordered lists
+  text = text.replace(/(^[-*+] .+(?:\n[-*+] .+)*)/gm, (m) => {
+    const items = m.split("\n").map((l) => `<li>${l.replace(/^[-*+] /, "")}</li>`).join("");
+    return `<ul>${items}</ul>`;
+  });
+
+  // Ordered lists
+  text = text.replace(/(^\d+\. .+(?:\n\d+\. .+)*)/gm, (m) => {
+    const items = m.split("\n").map((l) => `<li>${l.replace(/^\d+\. /, "")}</li>`).join("");
+    return `<ol>${items}</ol>`;
+  });
+
+  // Restore code blocks (escape their contents now)
+  text = text.replace(/@@CB(\d+)@@/g, (_m, i) => `<pre><code>${escapeHtml(codeBlocks[+i])}</code></pre>`);
+
+  // Paragraphs: split on blank lines, wrap loose runs in <p>, inner \n -> <br>
+  const blockTag = /^<(h\d|ul|ol|pre|blockquote)/i;
+  const blocks = text.split(/\n{2,}/).map((b) => {
+    const t = b.trim();
+    if (!t) return "";
+    if (blockTag.test(t)) return t;
+    return `<p>${t.replace(/\n/g, "<br>")}</p>`;
+  });
+
+  return blocks.filter(Boolean).join("\n");
+}
+
+/* -----------------------------------------------------
  * Module state — kept in module scope and synced across
  * clients via socket. `pushState` is GM-only.
  * --------------------------------------------------- */
 const state = {
   mood: "sarcastic",
-  glitchPulse: 0
+  glitchPulse: 0,
+  terminal: {
+    visible: false,
+    source: "",
+    html: ""
+  }
 };
 
 function applyState(newState, { rerender = true } = {}) {
@@ -257,6 +341,15 @@ function triggerGlitchFlash() {
 function broadcastShow() {
   if (!game.user.isGM) return;
   game.socket.emit(SOCKET_NAME, { type: "show" });
+}
+
+function setTerminal(partial) {
+  if (!game.user.isGM) return;
+  const next = { ...state.terminal, ...partial };
+  if (partial.source !== undefined) {
+    next.html = renderMarkdown(partial.source);
+  }
+  pushState({ terminal: next });
 }
 
 /* -----------------------------------------------------
@@ -301,7 +394,10 @@ function defineApp() {
       actions: {
         setMood: CrimsonMaggieApp_setMood,
         glitch: CrimsonMaggieApp_glitch,
-        show: CrimsonMaggieApp_show
+        show: CrimsonMaggieApp_show,
+        sendTerminal: CrimsonMaggieApp_sendTerminal,
+        toggleTerminal: CrimsonMaggieApp_toggleTerminal,
+        clearTerminal: CrimsonMaggieApp_clearTerminal
       }
     };
 
@@ -318,8 +414,11 @@ function defineApp() {
 
     async _prepareContext() {
       const moodKey = MOODS[state.mood] ? state.mood : "sarcastic";
+      const term = state.terminal ?? { visible: false, source: "", html: "" };
+      const isGM = game.user.isGM;
+      const showTerminal = isGM || term.visible;
       return {
-        isGM: game.user.isGM,
+        isGM,
         moodKey,
         moodLabel: MOODS[moodKey].label,
         faceSVG: renderFaceSVG(moodKey),
@@ -328,7 +427,14 @@ function defineApp() {
           key: k,
           label: MOODS[k].label,
           active: k === moodKey
-        }))
+        })),
+        terminal: {
+          visible: !!term.visible,
+          source: term.source ?? "",
+          html: term.html ?? "",
+          hasContent: !!(term.html && term.html.trim().length)
+        },
+        showTerminal
       };
     }
 
@@ -345,6 +451,15 @@ function defineApp() {
           screen.classList.add("cm-flash");
           setTimeout(() => screen.classList.remove("cm-flash"), 700);
         }
+      }
+
+      // GM: keep textarea-driven source in module state so toggles
+      // and other re-renders don't lose unsent drafts.
+      const textarea = root.querySelector(".cm-terminal-input");
+      if (textarea) {
+        textarea.addEventListener("input", (ev) => {
+          state.terminal.source = ev.target.value;
+        });
       }
     }
 
@@ -370,6 +485,21 @@ function CrimsonMaggieApp_glitch() {
 
 function CrimsonMaggieApp_show() {
   broadcastShow();
+}
+
+function CrimsonMaggieApp_sendTerminal(event, target) {
+  const root = target?.closest(".cm-root") ?? CrimsonMaggieApp.instance?.element;
+  const textarea = root?.querySelector(".cm-terminal-input");
+  const source = textarea ? textarea.value : (state.terminal.source ?? "");
+  setTerminal({ source });
+}
+
+function CrimsonMaggieApp_toggleTerminal() {
+  setTerminal({ visible: !state.terminal.visible });
+}
+
+function CrimsonMaggieApp_clearTerminal() {
+  setTerminal({ source: "" });
 }
 
 /* -----------------------------------------------------
@@ -408,6 +538,10 @@ Hooks.once("ready", () => {
       },
       setMood(key) { if (game.user.isGM) pushState({ mood: key }); },
       glitch() { triggerGlitchFlash(); },
+      setTerminal(markdown) { setTerminal({ source: String(markdown ?? "") }); },
+      showTerminal() { setTerminal({ visible: true }); },
+      hideTerminal() { setTerminal({ visible: false }); },
+      clearTerminal() { setTerminal({ source: "" }); },
       MOODS: MOOD_ORDER
     };
   }
